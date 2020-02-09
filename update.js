@@ -120,10 +120,11 @@ function upload(preparedData) {
   
   // Call DynamoDB to add the item to the table
   ddb.batchWriteItem(params, function(err, data) {
+    const date = new Date(+params.RequestItems[TABLE][0].PutRequest.Item.date.N).toUTCString();
     if (err) {
       console.log("Error", err);
     } else {
-      console.log("Success", data);
+      console.log("Success", data, `Last update at ${date}`);
     }
   });
 }
