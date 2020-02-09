@@ -1,0 +1,17 @@
+{
+  "name": "coronavirus-data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "update.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Artsiom Mezin",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.614.0",
+    "csv-parse": "^4.8.5",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0"
+  }
+}
