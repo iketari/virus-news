@@ -1,6 +1,6 @@
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
-const parse = require('csv-parse/lib/sync');
+const parse = require('csv-parse');
 const fs = require('fs');
 const util = require('util');
 const fetch = require('node-fetch');
@@ -33,10 +33,19 @@ function getCSVData(file) {
   return fs.readFileSync(file);
 }
 
-function getParsedData(csvData) {
-  return parse(csvData, {
-    columns: true,
-    skip_empty_lines: true
+async function getParsedData(csvData) {
+  return new Promise((resolve, reject) => {
+      parse(csvData, {
+        columns: true,
+        skip_empty_lines: true
+      }, (err, output) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        
+        resolve(output);
+      });
   });
 }
 
@@ -68,12 +77,12 @@ function getTotalNumbers(locations) {
 }
 
 
-const fields = ['Confirmed', 'Recovered', 'Deaths'];
-
 async function processData(type, data){
   const csvData = await getRemoteData(getRemoteDataSrc(type));
-  const parsedData = getParsedData(csvData);
+  const parsedData = await getParsedData(csvData);
   const totalNumbers = getTotalNumbers(parsedData);
+  
+  log(`Data retrived for ${type}`);
 
   Object.entries(totalNumbers).forEach(([ts, value]) => {
     data[ts] = {
@@ -86,6 +95,8 @@ async function processData(type, data){
 }
 
 function cleanUp(data) {
+  const fields = ['Confirmed', 'Recovered', 'Deaths'];
+
   for (let itemKey in data) {
     const itemData = data[itemKey];
     if (fields.every(fieldName => fieldName in itemData)) continue;
@@ -94,7 +105,7 @@ function cleanUp(data) {
   }
 }
 
-function upload(preparedData) {
+async function upload(preparedData) {
   const params = {
     RequestItems: {}
   };
@@ -109,7 +120,7 @@ function upload(preparedData) {
                   'Death': {N: '' + data['Deaths']}
               }
           }
-      }
+      };
   })
   .sort((a,b) => {
     return b.PutRequest.Item.date.N - a.PutRequest.Item.date.N; // most fresh data
@@ -118,24 +129,41 @@ function upload(preparedData) {
 
   log(params.RequestItems[TABLE]);
   
-  // Call DynamoDB to add the item to the table
-  ddb.batchWriteItem(params, function(err, data) {
-    const date = new Date(+params.RequestItems[TABLE][0].PutRequest.Item.date.N).toUTCString();
-    if (err) {
-      console.log("Error", err);
-    } else {
-      console.log("Success", data, `Last update at ${date}`);
-    }
+  return new Promise((resolve, reject) => {
+      // Call DynamoDB to add the item to the table
+      ddb.batchWriteItem(params, function(err, data) {
+        const date = new Date(+params.RequestItems[TABLE][0].PutRequest.Item.date.N).toUTCString();
+        if (err) {
+          log("Error", err);
+          reject(err);
+        } else {
+            resolve(data);
+            log("Success", data, `Last update at ${date}`);
+        }
+      });  
   });
+  
+
 }
 
-// Main logic
-async function main() {
-  let data = await processData('Confirmed', {});
-  await processData('Recovered', data);
-  await processData('Deaths', data);
+exports.handler = async (event) => {
+    const response = {
+        statusCode: 200,
+        body: '',
+    };
 
-  cleanUp(data);
-  upload(data);
-}
-main();
+    try {
+        let data = await processData('Confirmed', {});
+        await processData('Recovered', data);
+        await processData('Deaths', data);
+        
+        cleanUp(data);
+        await upload(data);
+    } catch(e) {
+        response.statusCode = 500;
+        response.body = e;
+        return response;
+    }
+
+    return response;
+};

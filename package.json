@@ -4,7 +4,7 @@
   "description": "",
   "main": "update.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "zip -r virus-news.zip *"
   },
   "author": "Artsiom Mezin",
   "license": "ISC",
