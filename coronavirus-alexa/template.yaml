@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Demonstrate a basic fact skill built with the ASK NodeJS SDK
+Resources:
+  serverlessrepoalexaskilalexaskillskitnodejsfactX9Y2P33RR7J2:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs10.x
+      CodeUri: .
+      Description: Demonstrate a basic fact skill built with the ASK NodeJS SDK
+      MemorySize: 128
+      Timeout: 7
+      Role: >-
+        arn:aws:iam::731650706562:role/serverlessrepo-alexa-skil-alexaskillskitnodejsfact-1AIMMKT2PE0AH
+      Events:
+        AlexaSkillEvent:
+          Type: AlexaSkill
+      Tags:
+        'serverlessrepo:semanticVersion': 2.0.5
+        'serverlessrepo:applicationId': >-
+          arn:aws:serverlessrepo:us-east-1:173334852312:applications/alexa-skills-kit-nodejs-factskill

@@ -1,14 +1,14 @@
 {
-  "name": "coronavirus-data",
+  "name": "coronavirus-update",
   "version": "1.0.0",
   "description": "",
   "main": "update.js",
   "scripts": {
-    "build": "zip -r virus-news.zip *"
+    "build": "zip -r ../coronavirus-update.zip *"
   },
   "author": "Artsiom Mezin",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "aws-sdk": "^2.614.0",
     "csv-parse": "^4.8.5",
     "node-fetch": "^2.6.0",

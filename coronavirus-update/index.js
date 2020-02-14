@@ -13,7 +13,7 @@ AWS.config.update({region: 'eu-west-1'});
 const TABLE = 'coronavirus-data';
 
 function getRemoteDataSrc(type) {
-  return `https://raw.githubusercontent.com/CSSEGISandData/2019-nCoV/master/time_series/time_series_2019-ncov-${type}.csv`;
+  return `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/time_series/time_series_2019-ncov-${type}.csv`;
 }
 
 async function getRemoteData(url) {
@@ -127,7 +127,7 @@ async function upload(preparedData) {
   })
   .slice(0, 25); // AWS limits it!
 
-  log(params.RequestItems[TABLE]);
+  // log(params.RequestItems[TABLE]);
   
   return new Promise((resolve, reject) => {
       // Call DynamoDB to add the item to the table
@@ -146,7 +146,7 @@ async function upload(preparedData) {
 
 }
 
-exports.handler = async (event) => {
+const main = async (event) => {
     const response = {
         statusCode: 200,
         body: '',
@@ -167,3 +167,5 @@ exports.handler = async (event) => {
 
     return response;
 };
+// main();
+exports.handler = main;
