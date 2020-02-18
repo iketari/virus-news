@@ -13,7 +13,8 @@ AWS.config.update({region: 'eu-west-1'});
 const TABLE = 'coronavirus-data';
 
 function getRemoteDataSrc(type) {
-  return `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/time_series/time_series_2019-ncov-${type}.csv`;
+  return `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-${type}.csv`;
+  // return `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/time_series/time_series_2019-ncov-${type}.csv`;
 }
 
 async function getRemoteData(url) {
