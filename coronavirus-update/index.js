@@ -138,7 +138,7 @@ async function upload(preparedData) {
           reject(err);
         } else {
             resolve(data);
-            log("Success", data, `Last update at ${date}`);
+            log(`Success, Last update at ${date}`);
         }
       });  
   });
