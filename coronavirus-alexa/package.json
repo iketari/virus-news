@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket coronavirus-alexa",
+    "deploy:upload": "sam deploy --template-file ./packaged.yaml --stack-name serverlessrepo-alexa-skills-kit-nodejs-factskill --capabilities CAPABILITY_IAM"
   },
   "author": "",
   "license": "ISC",

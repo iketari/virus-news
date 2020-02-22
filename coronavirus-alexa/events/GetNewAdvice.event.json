@@ -32,7 +32,7 @@
   "request": {
     "type": "IntentRequest",
     "intent": {
-      "name": "GetNewAdvice"
+      "name": "GetNewAdviceIntent"
     },
     "requestId": "amzn1.echo-api.request.1234",
     "timestamp": "2016-10-27T18:21:44Z",

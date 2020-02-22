@@ -91,7 +91,7 @@ const GetNewAdviceHandler = {
     const request = handlerInput.requestEnvelope.request;
 
     return request.type === 'IntentRequest'
-        && request.intent.name === 'GetNewAdvice';
+        && request.intent.name === 'GetNewAdviceIntent';
   },
   async handle(handlerInput) {
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
