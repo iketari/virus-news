@@ -13,7 +13,7 @@
 
 const {languageStrings} = require('./locales');
 
-const TABLE = 'coronavirus-data';
+const TABLE = 'coronavirus-data-ts';
 
 // sets up dependencies
 const Alexa = require('ask-sdk-core');
@@ -65,7 +65,7 @@ const GetNewFactHandler = {
     const confirmed = item['Confirmed'].N;
     const recovered = item['Recovered'].N;
     const death = item['Death'].N;
-    const date = new Date(+item['date'].N);
+    const date = new Date(+item['LastModified'].N);
    
     return handlerInput.responseBuilder
       .speak(`<speak>
