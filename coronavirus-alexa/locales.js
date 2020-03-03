@@ -29,7 +29,7 @@ const enData = {
   translation: {
     SKILL_NAME: 'Virus News',
     GET_FACT_MESSAGE: 'Here\'s your fact: ',
-    HELP_MESSAGE: 'You can say tell me a space fact, or, you can say exit... What can I help you with?',
+    HELP_MESSAGE: 'You can say advice me, or, get world statistic, or, you can say exit... What can I help you with?',
     HELP_REPROMPT: 'What can I help you with?',
     FALLBACK_MESSAGE: 'The Space Facts skill can\'t help you with that.  It can help you discover facts about space if you say tell me a space fact. What can I help you with?',
     FALLBACK_REPROMPT: 'What can I help you with?',

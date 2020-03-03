@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:zip": "zip -r ../coronavirus-alexa.zip *",
     "build": "sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket coronavirus-alexa",
     "deploy:upload": "sam deploy --template-file ./packaged.yaml --stack-name serverlessrepo-alexa-skills-kit-nodejs-factskill --capabilities CAPABILITY_IAM"
   },
