@@ -33,6 +33,7 @@ const enData = {
     HELP_REPROMPT: 'What can I help you with?',
     FALLBACK_MESSAGE: 'The Virus News skill can\'t help you with that.  It can help you discover latest Coronavirus figures if you say tell me virus news. What can I help you with?',
     FALLBACK_REPROMPT: 'What can I help you with?',
+    ADVICE_REPROMPT: 'Ask Alexa about more advice if you wish.',
     ERROR_MESSAGE: 'Sorry, an error occurred.',
     STOP_MESSAGE: 'Goodbye!',
     PROTECTION_ADVICE: [

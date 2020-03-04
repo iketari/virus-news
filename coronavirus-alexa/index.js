@@ -96,14 +96,11 @@ const GetNewAdviceHandler = {
   async handle(handlerInput) {
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     const randomAdvice = requestAttributes.t('PROTECTION_ADVICE');
-    const hint = 'Ask Alexa about more advice if you wish.';
-    
+    const reprompt = requestAttributes.t('ADVICE_REPROMPT');
+
     return handlerInput.responseBuilder
       .speak(randomAdvice)
-      .speak(hint)
-      // Uncomment the next line if you want to keep the session open so you can
-      // ask for another fact without first re-opening the skill
-      .reprompt('Would you like to know more?')
+      .reprompt(reprompt)
       .withSimpleCard('Wuhan virus advice', randomAdvice)
       .getResponse();
   },
