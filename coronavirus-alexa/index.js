@@ -96,11 +96,11 @@ const GetNewAdviceHandler = {
   async handle(handlerInput) {
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     const randomAdvice = requestAttributes.t('PROTECTION_ADVICE');
-    // concatenates a standard message with the random fact
-    // const speakOutput = requestAttributes.t('GET_FACT_MESSAGE') + randomFact;
+    const hint = 'Ask Alexa about more advice if you wish.';
     
     return handlerInput.responseBuilder
       .speak(randomAdvice)
+      .speak(hint)
       // Uncomment the next line if you want to keep the session open so you can
       // ask for another fact without first re-opening the skill
       .reprompt('Would you like to know more?')

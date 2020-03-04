@@ -7,7 +7,7 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: nodejs10.x
-      CodeUri: s3://coronavirus-alexa/3d9982c43a8522e9e148aa88f2e4696d
+      CodeUri: s3://coronavirus-alexa/4adaced31a0ec41cfd2086aba2ef0f80
       Description: Demonstrate a basic fact skill built with the ASK NodeJS SDK
       MemorySize: 128
       Timeout: 7
