@@ -5,16 +5,17 @@ const fs = require('fs');
 const util = require('util');
 const fetch = require('node-fetch');
 
-const log = obj => console.log(util.inspect(obj, {showHidden: false, depth: null}));
+const log = (...args) => {
+  console.log(...args.map(arg => typeof arg === 'object' ? util.inspect(obj, {showHidden: false, depth: null}) : arg));
+};
 
 // Set the region 
 AWS.config.update({region: 'eu-west-1'});
 
-const TABLE = 'coronavirus-data';
+const TABLE = 'coronavirus-data-ts';
 
 function getRemoteDataSrc(type) {
   return `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-${type}.csv`;
-  // return `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/time_series/time_series_2019-ncov-${type}.csv`;
 }
 
 async function getRemoteData(url) {
@@ -118,7 +119,8 @@ async function upload(preparedData) {
                   'date': {N: '' + key},
                   'Confirmed': {N: '' + data['Confirmed']},
                   'Recovered': {N: '' + data['Recovered']},
-                  'Death': {N: '' + data['Deaths']}
+                  'Death': {N: '' + data['Deaths']},
+                  'LastModified': {N: '' + Date.now()},
               }
           }
       };
@@ -133,9 +135,9 @@ async function upload(preparedData) {
   return new Promise((resolve, reject) => {
       // Call DynamoDB to add the item to the table
       ddb.batchWriteItem(params, function(err, data) {
-        const date = new Date(+params.RequestItems[TABLE][0].PutRequest.Item.date.N).toUTCString();
+        const date = new Date(+params.RequestItems[TABLE][0].PutRequest.Item.LastModified.N).toUTCString();
         if (err) {
-          log("Error", err);
+          log('Error', err);
           reject(err);
         } else {
             resolve(data);
