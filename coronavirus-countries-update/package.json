@@ -1,0 +1,17 @@
+{
+  "name": "coronavirus-countries-update",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "zip -r ../coronavirus-countries-update.zip *"
+  },
+  "author": "Artsiom Mezin",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.614.0",
+    "csv-parse": "^4.8.5",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0"
+  }
+}
