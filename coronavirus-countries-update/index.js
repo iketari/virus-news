@@ -120,7 +120,7 @@ async function upload(preparedData) {
                   'Confirmed': {N: entry['Confirmed'].toString()},
                   'Recovered': {N: entry['Recovered'].toString()},
                   'Death': {N: entry['Deaths'].toString()},
-                  'LastUpdate': {N: entry['Last_Update'].toString()},
+                  'LastModified': {N: entry['Last_Update'].toString()},
               }
           }
       };
@@ -167,5 +167,5 @@ const main = async (event) => {
 
     return response;
 };
-main();
-// exports.handler = main;
+// main();
+exports.handler = main;

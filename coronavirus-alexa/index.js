@@ -14,6 +14,7 @@
 const {languageStrings} = require('./locales');
 
 const TABLE = 'coronavirus-data-ts';
+const TABLE_COUNTRIES = 'coronavirus-countries'
 
 // sets up dependencies
 const Alexa = require('ask-sdk-core');
@@ -26,6 +27,13 @@ AWS.config.update({region: 'eu-west-1'});
 
 const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
+function getTodayTs() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+
+  return +d;
+}
+
 const getLatestStat = async function() {
   const params = {
     TableName: TABLE,
@@ -33,6 +41,31 @@ const getLatestStat = async function() {
   return new Promise((resolve, reject) => {
     ddb.scan(params, function(err, data) {
       if (err) {
+        reject(err);
+      } else {
+        resolve(data.Items);
+      }
+    });
+  })
+}
+
+const getLatestForCountry = async country => {
+  const params = {
+    TableName: TABLE_COUNTRIES,
+    KeyConditionExpression: "#c = :country and #d = :today",
+    ExpressionAttributeNames:{
+        "#c": "Country",
+        "#d": "Date"
+    },
+    ExpressionAttributeValues: {
+        ":country": {S: country},
+        ":today": {N: getTodayTs().toString()}
+    }
+  };
+  return new Promise((resolve, reject) => {
+    ddb.query(params, function(err, data) {
+      if (err) {
+        console.log('ddb.query error!', err);
         reject(err);
       } else {
         resolve(data.Items);
@@ -51,17 +84,38 @@ const GetNewFactHandler = {
         && request.intent.name === 'GetNewFactIntent');
   },
   async handle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     // const randomFact = requestAttributes.t('FACTS');
     // concatenates a standard message with the random fact
     // const speakOutput = requestAttributes.t('GET_FACT_MESSAGE') + randomFact;
+
+    let items, country;
+
+    console.log(request);
+    if (request.intent && request.intent.slots && request.intent.slots.country && request.intent.slots.country.value) {
+      country = request.intent.slots.country.value;
+
+      try {
+        console.log(`Querying country ${country}`);
+        items = await getLatestForCountry(country);
+      } catch(e) {
+        console.log(e);
+        items = await getLatestStat();
+        items.sort((item1, item2) => {
+          return item2['date'].N - +item1['date'].N;
+        });
+      }
+
+    } else {
+      items = await getLatestStat();
+      items.sort((item1, item2) => {
+        return item2['date'].N - +item1['date'].N;
+      });
+    }
     
-    let items = await getLatestStat();
-    
-    items.sort((item1, item2) => {
-      return item2['date'].N - +item1['date'].N;
-    });
     const item = items.shift(); // get latest
+    console.log(item);
     const confirmed = item['Confirmed'].N;
     const recovered = item['Recovered'].N;
     const death = item['Death'].N;
@@ -69,7 +123,7 @@ const GetNewFactHandler = {
    
     return handlerInput.responseBuilder
       .speak(`<speak>
-        Latest Coronavirus data. ${confirmed} confirmed cases.
+        Latest Coronavirus data${country ? (' for ' + country) : ''}. ${confirmed} confirmed cases.
         <amazon:emotion name="excited" intensity="medium">
              ${recovered} people recovered.
         </amazon:emotion>
