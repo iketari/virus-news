@@ -99,7 +99,7 @@ const GetNewFactHandler = {
         console.log(`Querying country ${country}`);
         items = await getLatestForCountry(country);
 
-        if (item.length === 0) {
+        if (items.length === 0) {
           countryNotFound = true;
           throw new Error(`Country: "${country}" has not been found`);
         }
@@ -122,14 +122,15 @@ const GetNewFactHandler = {
 
     if (countryNotFound) {
       return handlerInput.responseBuilder
-        .speak(`Sorry, I cannot find any data for ${country}`)
+        .speak(`Sorry, I cannot find any data for ${country}. Try another country name.`)
         .reprompt(requestAttributes.t('FALLBACK_REPROMPT'))
         .getResponse();
     }
 
     return handlerInput.responseBuilder
       .speak(`<speak>
-        Latest Coronavirus data${country ? (' for ' + country) : ''}. ${confirmed} confirmed cases.
+        Latest Coronavirus ${!country ? ' global ' : ''} numbers${country ? (' for ' + country) : ''}.
+        ${confirmed} confirmed cases.
         <amazon:emotion name="excited" intensity="medium">
              ${recovered} people recovered.
         </amazon:emotion>
