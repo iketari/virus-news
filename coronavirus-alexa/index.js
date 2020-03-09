@@ -34,7 +34,7 @@ function getTodayTs() {
   return +d;
 }
 
-const getLatestStat = async function() {
+const getLatestGlobalStat = async function() {
   const params = {
     TableName: TABLE,
   };
@@ -43,6 +43,9 @@ const getLatestStat = async function() {
       if (err) {
         reject(err);
       } else {
+        data.Items.sort((item1, item2) => {
+          return item2['date'].N - +item1['date'].N;
+        });
         resolve(data.Items);
       }
     });
@@ -86,41 +89,44 @@ const GetNewFactHandler = {
   async handle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
-    // const randomFact = requestAttributes.t('FACTS');
-    // concatenates a standard message with the random fact
-    // const speakOutput = requestAttributes.t('GET_FACT_MESSAGE') + randomFact;
 
-    let items, country;
+    let items, country, countryNotFound;
 
-    console.log(request);
     if (request.intent && request.intent.slots && request.intent.slots.country && request.intent.slots.country.value) {
       country = request.intent.slots.country.value;
 
       try {
         console.log(`Querying country ${country}`);
         items = await getLatestForCountry(country);
+
+        if (item.length === 0) {
+          countryNotFound = true;
+          throw new Error(`Country: "${country}" has not been found`);
+        }
+
       } catch(e) {
         console.log(e);
-        items = await getLatestStat();
-        items.sort((item1, item2) => {
-          return item2['date'].N - +item1['date'].N;
-        });
+        items = await getLatestGlobalStat();
       }
 
     } else {
-      items = await getLatestStat();
-      items.sort((item1, item2) => {
-        return item2['date'].N - +item1['date'].N;
-      });
+      items = await getLatestGlobalStat();
     }
     
     const item = items.shift(); // get latest
-    console.log(item);
+
     const confirmed = item['Confirmed'].N;
     const recovered = item['Recovered'].N;
     const death = item['Death'].N;
     const date = new Date(+item['LastModified'].N);
-   
+
+    if (countryNotFound) {
+      return handlerInput.responseBuilder
+        .speak(`Sorry, I cannot find any data for ${country}`)
+        .reprompt(requestAttributes.t('FALLBACK_REPROMPT'))
+        .getResponse();
+    }
+
     return handlerInput.responseBuilder
       .speak(`<speak>
         Latest Coronavirus data${country ? (' for ' + country) : ''}. ${confirmed} confirmed cases.
