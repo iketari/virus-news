@@ -11,7 +11,7 @@
   "dependencies": {
     "aws-sdk": "^2.614.0",
     "csv-parse": "^4.8.5",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "request": "^2.88.0"
   }
 }
