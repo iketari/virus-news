@@ -9,7 +9,7 @@
   "author": "Artsiom Mezin",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.614.0",
+    "aws-sdk": "^2.814.0",
     "csv-parse": "^4.8.5",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0"
